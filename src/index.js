@@ -19,6 +19,10 @@ app.use(userRouters);
 app.use(taskRouters);
 
 app.get('/', (req, res) => {
+  res.send(process.env.MONGODB_URL);
+});
+
+app.get('/check', (req, res) => {
   res.send('Working');
 });
 
