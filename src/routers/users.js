@@ -3,7 +3,7 @@ require('../db/mongoose');
 const Users = require('../models/user');
 const multer = require('multer');
 const sharp = require('sharp');
-const { sendWelcomeEmail, userCancelEmail } = require('../emails/account');
+// const { sendWelcomeEmail, userCancelEmail } = require('../emails/account');
 const auth = require('../middleware/auth');
 const router = new express.Router();
 
@@ -14,7 +14,7 @@ router.post('/users', async (req, res) => {
 
   try {
     await user.save();
-    sendWelcomeEmail(user.email, user.name);
+    // sendWelcomeEmail(user.email, user.name);
     const token = await user.generateAuthToken();
 
     res.status(200).send({ user, token });
@@ -108,7 +108,7 @@ router.delete('/users/me', auth, async (req, res) => {
     // Old Wayy
     // const user = await Users.findByIdAndDelete(req.user._id);
     await req.user.remove(); //new Way
-    userCancelEmail(req.user.email, req.user.name);
+    // userCancelEmail(req.user.email, req.user.name);
     res.send(req.user);
   } catch (error) {
     res.status(400).send();
@@ -210,5 +210,7 @@ router.get('/users/:id/avatar', async (req, res) => {
     res.status(404).send();
   }
 });
+
+
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('express')
 require('../db/mongoose');
 const Tasks = require('../models/tasks');
 const { update } = require('../models/tasks');
@@ -68,12 +68,16 @@ router.get('/tasks', auth, async (req, res) => {
       .execPopulate();
 
     res.send(req.user.tasks);
-  } catch (error) {}
+  } catch (error) { }
 });
 
 router.get('/task/:id', async (req, res) => {
   try {
     const task = await Tasks.findById(req.params.id);
+
+    if (!task) return res.status(404).send({ body: "No Data Found" })
+
+
     res.send(task);
   } catch (e) {
     res.status(500).send(e);
@@ -87,7 +91,7 @@ router.patch('/task/:id', auth, async (req, res) => {
   const isValidator = updates.every((update) => updateBody.includes(update));
 
   if (!isValidator) {
-    return res.status(400).send({ Error: 'Imvalid Updates!' });
+    return res.status(400).send({ Error: 'Invalid Updates!' });
   }
 
   try {

@@ -23,6 +23,14 @@ const taskSchema = new mongoose.Schema(
   }
 );
 
+//hide the private data like all tokens,password etc..
+taskSchema.methods.toJSON = function () {
+  const task = this;
+  const taskObject = task.toObject();
+  delete taskObject.__v;
+  return taskObject;
+};
+
 taskSchema.plugin(mongoosePaginate);
 const Tasks = mongoose.model('Tasks', taskSchema);
 
