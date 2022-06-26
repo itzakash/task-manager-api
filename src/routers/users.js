@@ -127,7 +127,7 @@ router.post('/users/login', async (req, res) => {
 
     res.send({ user, token });
   } catch (error) {
-    res.status(404).send();
+    res.status(401).send();
   }
 });
 
