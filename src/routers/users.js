@@ -1,15 +1,15 @@
-const express = require('express');
-require('../db/mongoose');
-const Users = require('../models/user');
-const multer = require('multer');
-const sharp = require('sharp');
+const express = require("express");
+require("../db/mongoose");
+const Users = require("../models/user");
+const multer = require("multer");
+const sharp = require("sharp");
 // const { sendWelcomeEmail, userCancelEmail } = require('../emails/account');
-const auth = require('../middleware/auth');
+const auth = require("../middleware/auth");
 const router = new express.Router();
 
 //create new user
 
-router.post('/users', async (req, res) => {
+router.post("/users", async (req, res) => {
   const user = new Users(req.body);
 
   try {
@@ -19,13 +19,14 @@ router.post('/users', async (req, res) => {
 
     res.status(200).send({ user, token });
   } catch (e) {
+    console.log(e);
     res.status(400).send(e);
   }
 });
 
 // Fetching the all users
 
-router.get('/users', auth, async (req, res) => {
+router.get("/users", auth, async (req, res) => {
   try {
     const users = await Users.find();
 
@@ -41,7 +42,7 @@ router.get('/users', auth, async (req, res) => {
 
 // Fetch User Profile
 
-router.get('/users/profile', auth, async (req, res) => {
+router.get("/users/profile", auth, async (req, res) => {
   try {
     res.status(201).send(req.user);
   } catch (e) {
@@ -65,14 +66,14 @@ router.get('/users/profile', auth, async (req, res) => {
 
 //Update the user
 
-router.patch('/users/me', auth, async (req, res) => {
+router.patch("/users/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedBody = ['name', 'email', 'password', 'age'];
+  const allowedBody = ["name", "email", "password", "age"];
 
   const isValidator = updates.every((update) => allowedBody.includes(update));
 
   if (!isValidator) {
-    return res.status(400).send({ error: 'Invalida Updates!' });
+    return res.status(400).send({ error: "Invalida Updates!" });
   }
   try {
     updates.forEach((update) => (req.user[update] = req.body[update]));
@@ -103,7 +104,7 @@ router.patch('/users/me', auth, async (req, res) => {
 
 //delete the account from current logged user
 
-router.delete('/users/me', auth, async (req, res) => {
+router.delete("/users/me", auth, async (req, res) => {
   try {
     // Old Wayy
     // const user = await Users.findByIdAndDelete(req.user._id);
@@ -116,7 +117,7 @@ router.delete('/users/me', auth, async (req, res) => {
 });
 //login user
 
-router.post('/users/login', async (req, res) => {
+router.post("/users/login", async (req, res) => {
   try {
     const user = await Users.findBycredentials(
       req.body.email,
@@ -133,7 +134,7 @@ router.post('/users/login', async (req, res) => {
 
 //logout user
 
-router.post('/users/logout', auth, async (req, res) => {
+router.post("/users/logout", auth, async (req, res) => {
   try {
     // console.log(req.user);
     req.user.tokens = req.user.tokens.filter((token) => {
@@ -150,7 +151,7 @@ router.post('/users/logout', auth, async (req, res) => {
 
 //logout form all device
 
-router.post('/users/logoutAll', auth, async (req, res) => {
+router.post("/users/logoutAll", auth, async (req, res) => {
   try {
     req.user.tokens = [];
     await req.user.save();
@@ -170,7 +171,7 @@ const upload = multer({
   },
   fileFilter(req, file, cb) {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error('Please upload the jpg,jpeg and png files'));
+      return cb(new Error("Please upload the jpg,jpeg and png files"));
     }
 
     cb(undefined, true);
@@ -178,9 +179,9 @@ const upload = multer({
 });
 
 router.post(
-  '/users/me/avatar',
+  "/users/me/avatar",
   auth,
-  upload.single('avatar'),
+  upload.single("avatar"),
   async (req, res) => {
     // With out resize
     // req.user.avatar = req.file.buffer;
@@ -196,7 +197,7 @@ router.post(
   }
 );
 
-router.get('/users/:id/avatar', async (req, res) => {
+router.get("/users/:id/avatar", async (req, res) => {
   try {
     const user = await Users.findById(req.params.id);
 
@@ -204,13 +205,11 @@ router.get('/users/:id/avatar', async (req, res) => {
       throw new Error();
     }
 
-    res.set('Content-Type', 'image/png');
+    res.set("Content-Type", "image/png");
     res.send(user.avatar);
   } catch (error) {
     res.status(404).send();
   }
 });
-
-
 
 module.exports = router;

@@ -1,9 +1,7 @@
-
-
-const express = require('express');
-const userRouters = require('./routers/users');
-const taskRouters = require('./routers/tasks');
-
+const express = require("express");
+const userRouters = require("./routers/users");
+const taskRouters = require("./routers/tasks");
+const cors = require("cors");
 const app = express();
 
 // app.use((req, res, next) => {
@@ -14,17 +12,17 @@ const app = express();
 //     next();
 //   }
 // });
-
+app.use(cors());
 app.use(express.json());
 app.use(userRouters);
 app.use(taskRouters);
 
-app.get('/', (req, res) => {
-  res.send('Working');
+app.get("/", (req, res) => {
+  res.send("Working");
 });
 
-app.get('/check', (req, res) => {
-  res.send('Working');
+app.get("/check", (req, res) => {
+  res.send("Working");
 });
 
 module.exports = app;
@@ -50,9 +48,9 @@ const main = async () => {
   console.log(user.tasks);
 };*/
 
-const multer = require('multer');
+const multer = require("multer");
 const upload = multer({
-  dest: 'images',
+  dest: "images",
   limits: {
     fileSize: 1000000,
   },
@@ -63,7 +61,7 @@ const upload = multer({
     // with RegExp
 
     if (!file.originalname.match(/\.(doc|docx)$/)) {
-      return cb(new Error('Please Upload a Doc or docx file'));
+      return cb(new Error("Please Upload a Doc or docx file"));
     }
 
     cb(undefined, true);
@@ -74,8 +72,8 @@ const upload = multer({
 });
 
 app.post(
-  '/upload',
-  upload.single('upload'),
+  "/upload",
+  upload.single("upload"),
   (req, res) => {
     res.send();
   },
